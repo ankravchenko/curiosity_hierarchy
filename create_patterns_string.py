@@ -48,9 +48,10 @@ def sliding_average(a, span):
 def sliding_average_string(a, span):
 	c=np.random.rand(len(a))
 	for i in range(0, len(a), span):
-		b=a[i:i+span]
-		m=np.mean(b)
-		c[i:i+span]=m
+		if (i+span) < len(a):
+			b=a[i:i+span]
+			m=np.mean(b)
+			c[i:i+span]=m
 	return c
 '''
 def normalize(matrix):
@@ -164,6 +165,7 @@ def calculate_total_complexity(cf_string):
 
 ##########function end###############
 
+file1 = open('complexity_mirror_copy_4_100.txt', 'w')
 n=20
 
 print('n = ',n*2)
@@ -214,21 +216,25 @@ print("context-free grammar:")
 total_complexity = calculate_total_complexity(cf_string)
 print("total_complexity: ", total_complexity) 
 
-a_4=sliding_average_string(cf_string, 4)
-'''cf_part=a_4[0:1400]
-b=cf_part.reshape(40,35)
-data = Image.fromarray((b * 255).astype(np.uint8))
-data.save('contextfree_n24_l60_avg4.png')
+file1.write(total_complexity)
+file1.write('\t')
+  
 '''
+a_4=sliding_average_string(cf_string, 4)
 a_8=sliding_average_string(cf_string, 8)
 a_16=sliding_average_string(cf_string, 16)
 a_32=sliding_average_string(cf_string, 32)
+a_64=sliding_average_string(cf_string, 64)
+'''
 
 print("context-senstitive grammar:")
 total_complexity = calculate_total_complexity(cs_string)
 print("total_complexity: ", total_complexity) 
 
+file1.write(total_complexity)
+file1.write('\n')
 
+'''
 ca_4=sliding_average_string(cs_string, 4)
 
 
@@ -237,11 +243,15 @@ ca_8=sliding_average_string(cs_string, 8)
 ca_16=sliding_average_string(cs_string, 16)
 
 ca_32=sliding_average_string(cs_string, 32)
-
+ca_64=sliding_average_string(cs_string, 64)
+'''
 
 ################DEBUG#########################
+'''
 rand = np.random.choice([x for x in [-1,1]],l*n*2)
 print("random string:")
 total_complexity = calculate_total_complexity(rand)
 print("total_complexity: ", total_complexity) 
+'''
 
+file1.close()
