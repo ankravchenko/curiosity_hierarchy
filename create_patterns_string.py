@@ -133,12 +133,44 @@ def generate_random_string(length: int):
 
 
 
-n=12
+def calculate_total_complexity(cf_string):
+
+    avg_a_2=sliding_average_string(cf_string, 2)
+    avg_a_4=sliding_average_string(cf_string, 4)
+    avg_a_8=sliding_average_string(cf_string, 8)
+    avg_a_16=sliding_average_string(cf_string, 16)
+    avg_a_32=sliding_average_string(cf_string, 32)
+    avg_a_64=sliding_average_string(cf_string, 64)
+    avg_a_128=sliding_average_string(cf_string, 128)
+    avg_a_256=sliding_average_string(cf_string, 256)
+
+
+    print("0-2: ", overlap(normalize(cf_string),normalize(avg_a_2)))
+    print("2-4: ", overlap(normalize(avg_a_2),normalize(avg_a_4)))
+    print("4-8: ", overlap(normalize(avg_a_4),normalize(avg_a_8)))
+    print("8-16: ", overlap(normalize(avg_a_8),normalize(avg_a_16)))
+    print("16-32: ", overlap(normalize(avg_a_16),normalize(avg_a_32)))
+    print("32-64: ", overlap(normalize(avg_a_32),normalize(avg_a_64)))
+    print("64-128: ", overlap(normalize(avg_a_64),normalize(avg_a_128)))
+    print("128-256: ", overlap(normalize(avg_a_128),normalize(avg_a_256)))
+
+    sizes=[cf_string, avg_a_2, avg_a_4, avg_a_8, avg_a_16]#, avg_a_32, avg_a_64, avg_a_128]
+    total_complexity=0
+    for i in range(0, len(sizes)-1):
+        total_complexity=total_complexity+overlap(normalize(sizes[i]),normalize(sizes[i+1]))
+
+    return total_complexity
+
+
+##########function end###############
+
+n=20
 
 print('n = ',n*2)
 
 mirror_strings=[]
 copy_strings=[]
+
 
 '''
 #generates full grammar
@@ -152,7 +184,7 @@ for half_string in generate_strings_array(n):
 '''
 
 #generates l sentences from a grammar
-l=60
+l=100
 for i in range(1,l):
     half_string = generate_random_string(n)
     copy_string=half_string+half_string
@@ -162,247 +194,54 @@ for i in range(1,l):
     copy_strings.extend(copy_string)
     mirror_strings.extend(mirror_string)
 	
-
 print('grammars generated')
 
 cf=np.asarray(mirror_strings)
 
 cs=np.asarray(copy_strings)
 
-#string
-a=cf
-'''
-r=cf.shape[0]*cf.shape[1]
-b=cf.reshape(r,)[0:int(math.sqrt(r))**2].reshape(int(math.sqrt(r)),int(math.sqrt(r)))
-data = Image.fromarray((b * 255).astype(np.uint8))
-data.save('context-free_original.png')
-'''
-cf_normalized =cf / cf.sum(axis=0)
 
+#cf_normalized =cf / cf.sum(axis=0)
+#cs_normalized =cs / cs.sum(axis=0)
 #string
 
 cf_string=cf
 cs_string=cs
 
 
-avg_a_2=sliding_average_string(cf_string, 2)
-'''b=avg_a_2.reshape(r,)[0:int(math.sqrt(r))**2].reshape(int(math.sqrt(r)),int(math.sqrt(r)))
-data = Image.fromarray((b * 255).astype(np.uint8))
-data.save('context-free_avg2.png')
-'''
-
-avg_a_4=sliding_average_string(cf_string, 4)
-'''b=avg_a_4.reshape(r,)[0:int(math.sqrt(r))**2].reshape(int(math.sqrt(r)),int(math.sqrt(r)))
-data = Image.fromarray((b * 255).astype(np.uint8))
-data.save('context-free_avg4.png')
-'''
-avg_a_8=sliding_average_string(cf_string, 8)
-'''b=avg_a_8.reshape(r,)[0:int(math.sqrt(r))**2].reshape(int(math.sqrt(r)),int(math.sqrt(r)))
-data = Image.fromarray((b * 255).astype(np.uint8))
-data.save('context-free_avg8.png')
-'''
-avg_a_16=sliding_average_string(cf_string, 16)
-'''b=avg_a_16.reshape(r,)[0:int(math.sqrt(r))**2].reshape(int(math.sqrt(r)),int(math.sqrt(r)))
-data = Image.fromarray((b * 255).astype(np.uint8))
-data.save('context-free_avg16.png')
-'''
-avg_a_32=sliding_average_string(cf_string, 32)
-'''b=avg_a_32.reshape(r,)[0:int(math.sqrt(r))**2].reshape(int(math.sqrt(r)),int(math.sqrt(r)))
-data = Image.fromarray((b * 255).astype(np.uint8))
-data.save('context-free_avg32.png')
-'''
-avg_a_64=sliding_average_string(cf_string, 64)
-'''b=avg_a_64.reshape(r,)[0:int(math.sqrt(r))**2].reshape(int(math.sqrt(r)),int(math.sqrt(r)))
-data = Image.fromarray((b * 255).astype(np.uint8))
-data.save('context-free_avg64.png')
-'''
-avg_a_128=sliding_average_string(cf_string, 128)
-'''b=avg_a_128.reshape(r,)[0:int(math.sqrt(r))**2].reshape(int(math.sqrt(r)),int(math.sqrt(r)))
-data = Image.fromarray((b * 255).astype(np.uint8))
-data.save('context-free_avg128.png')
-'''
-avg_a_256=sliding_average_string(cf_string, 256)
-'''b=avg_a_128.reshape(r,)[0:int(math.sqrt(r))**2].reshape(int(math.sqrt(r)),int(math.sqrt(r)))
-data = Image.fromarray((b * 255).astype(np.uint8))
-data.save('context-free_avg256.png')
-'''
 
 print("context-free grammar:")
-print("0-2: ", overlap(normalize(cf_string),normalize(avg_a_2)))
-print("2-4: ", overlap(normalize(avg_a_2),normalize(avg_a_4)))
-print("4-8: ", overlap(normalize(avg_a_4),normalize(avg_a_8)))
-print("8-16: ", overlap(normalize(avg_a_8),normalize(avg_a_16)))
-print("16-32: ", overlap(normalize(avg_a_16),normalize(avg_a_32)))
-print("32-64: ", overlap(normalize(avg_a_32),normalize(avg_a_64)))
-print("64-128: ", overlap(normalize(avg_a_64),normalize(avg_a_128)))
-print("128-256: ", overlap(normalize(avg_a_128),normalize(avg_a_256)))
+total_complexity = calculate_total_complexity(cf_string)
+print("total_complexity: ", total_complexity) 
 
-
-sizes=[avg_a_2, avg_a_4, avg_a_8, avg_a_16]#, avg_a_32, avg_a_64, avg_a_128]
-total_complexity=0
-for i in range(0, len(sizes)-1):
-	total_complexity=total_complexity+overlap(normalize(sizes[i]),normalize(sizes[i+1]))
-
-print("total_complexity: ", total_complexity)
-
-'''
-#non-normalized
-print("0-2: ", overlap(cf,avg_a_2))
-print("2-4: ", overlap(avg_a_2,avg_a_4))
-print("4-8: ", overlap(avg_a_4,avg_a_8))
-print("8-16: ", overlap(avg_a_8,avg_a_16))
-print("16-32: ", overlap(avg_a_16,avg_a_32))
-print("32-64: ", overlap(avg_a_32,avg_a_64))
-print("64-128: ", overlap(avg_a_64,avg_a_128))
-print("128-256: ", overlap(avg_a_128,avg_a_256))
-'''
-a=cs
-
-cs_normalized =cs / cs.sum(axis=0)
-
-'''
-r=cs.shape[0]*cs.shape[1]
-b=cs.reshape(r,)[0:int(math.sqrt(r))**2].reshape(int(math.sqrt(r)),int(math.sqrt(r)))
+a_4=sliding_average_string(cf_string, 4)
+'''cf_part=a_4[0:1400]
+b=cf_part.reshape(40,35)
 data = Image.fromarray((b * 255).astype(np.uint8))
+data.save('contextfree_n24_l60_avg4.png')
+'''
+a_8=sliding_average_string(cf_string, 8)
+a_16=sliding_average_string(cf_string, 16)
+a_32=sliding_average_string(cf_string, 32)
 
-data.save('context-sensitive_original.png')
-'''
-
-avg_a_2=sliding_average_string(cs_string, 2)
-'''b=avg_a_2.reshape(r,)[0:int(math.sqrt(r))**2].reshape(int(math.sqrt(r)),int(math.sqrt(r)))
-data = Image.fromarray((b * 255).astype(np.uint8))
-data.save('context-sensitive_avg2.png')
-'''
-avg_a_4=sliding_average_string(cs_string, 4)
-'''b=avg_a_4.reshape(r,)[0:int(math.sqrt(r))**2].reshape(int(math.sqrt(r)),int(math.sqrt(r)))
-data = Image.fromarray((b * 255).astype(np.uint8))
-data.save('context-sensitive_avg4.png')
-'''
-avg_a_8=sliding_average_string(cs_string, 8)
-'''b=avg_a_8.reshape(r,)[0:int(math.sqrt(r))**2].reshape(int(math.sqrt(r)),int(math.sqrt(r)))
-data = Image.fromarray((b * 255).astype(np.uint8))
-data.save('context-sensitive_avg8.png')
-'''
-avg_a_16=sliding_average_string(cs_string, 16)
-'''b=avg_a_16.reshape(r,)[0:int(math.sqrt(r))**2].reshape(int(math.sqrt(r)),int(math.sqrt(r)))
-data = Image.fromarray((b * 255).astype(np.uint8))
-data.save('context-sensitive_avg16.png')
-'''
-avg_a_32=sliding_average_string(cs_string, 32)
-'''b=avg_a_32.reshape(r,)[0:int(math.sqrt(r))**2].reshape(int(math.sqrt(r)),int(math.sqrt(r)))
-data = Image.fromarray((b * 255).astype(np.uint8))
-data.save('context-sensitive_avg32.png')
-'''
-avg_a_64=sliding_average_string(cs_string, 64)
-'''b=avg_a_64.reshape(r,)[0:int(math.sqrt(r))**2].reshape(int(math.sqrt(r)),int(math.sqrt(r)))
-data = Image.fromarray((b * 255).astype(np.uint8))
-data.save('context-free_avg64.png')
-'''
-avg_a_128=sliding_average_string(cs_string, 128)
-'''b=avg_a_128.reshape(r,)[0:int(math.sqrt(r))**2].reshape(int(math.sqrt(r)),int(math.sqrt(r)))
-data = Image.fromarray((b * 255).astype(np.uint8))
-data.save('context-free_avg128.png')
-'''
-avg_a_256=sliding_average_string(cs_string, 256)
-'''b=avg_a_128.reshape(r,)[0:int(math.sqrt(r))**2].reshape(int(math.sqrt(r)),int(math.sqrt(r)))
-data = Image.fromarray((b * 255).astype(np.uint8))
-data.save('context-free_avg256.png')
-'''
-print("context-sensitive grammar:")
-
-print("0-2: ", overlap(normalize(cs_string),normalize(avg_a_2)))
-print("2-4: ", overlap(normalize(avg_a_2),normalize(avg_a_4)))
-print("4-8: ", overlap(normalize(avg_a_4),normalize(avg_a_8)))
-print("8-16: ", overlap(normalize(avg_a_8),normalize(avg_a_16)))
-print("16-32: ", overlap(normalize(avg_a_16),normalize(avg_a_32)))
-print("32-64: ", overlap(normalize(avg_a_32),normalize(avg_a_64)))
-print("64-128: ", overlap(normalize(avg_a_64),normalize(avg_a_128)))
-print("128-256: ", overlap(normalize(avg_a_128),normalize(avg_a_256)))
+print("context-senstitive grammar:")
+total_complexity = calculate_total_complexity(cs_string)
+print("total_complexity: ", total_complexity) 
 
 
+ca_4=sliding_average_string(cs_string, 4)
 
-sizes=[avg_a_2, avg_a_4, avg_a_8, avg_a_16]#, avg_a_32]#, avg_a_64, avg_a_128]
-total_complexity=0
-for i in range(0, len(sizes)-1):
-	total_complexity=total_complexity+overlap(normalize(sizes[i]),normalize(sizes[i+1]))
 
-print("total_complexity: ", total_complexity)
+ca_8=sliding_average_string(cs_string, 8)
+
+ca_16=sliding_average_string(cs_string, 16)
+
+ca_32=sliding_average_string(cs_string, 32)
+
 
 ################DEBUG#########################
-rand = np.random.choice([x for x in [-1,1]],512*512)
+rand = np.random.choice([x for x in [-1,1]],l*n*2)
+print("random string:")
+total_complexity = calculate_total_complexity(rand)
+print("total_complexity: ", total_complexity) 
 
-'''
-print('!!!!', r)
-print(rand.shape)
-b=rand.reshape(r,)[0:int(math.sqrt(r))**2].reshape(int(math.sqrt(r)),int(math.sqrt(r)))
-data = Image.fromarray((b * 255).astype(np.uint8))
-data.save('random_original.png')
-
-'''
-
-avg_a_2=sliding_average_string(rand, 2)
-
-#b=avg_a_2.reshape(r,)[0:int(math.sqrt(r))**2].reshape(int(math.sqrt(r)),int(math.sqrt(r)))
-#data = Image.fromarray((b * 255).astype(np.uint8))
-#data.save('random_avg2.png')
-
-
-avg_a_4=sliding_average_string(rand, 4)
-'''b=avg_a_4.reshape(r,)[0:int(math.sqrt(r))**2].reshape(int(math.sqrt(r)),int(math.sqrt(r)))
-data = Image.fromarray((b * 255).astype(np.uint8))
-data.save('random_avg4.png')'''
-
-avg_a_8=sliding_average_string(rand, 8)
-'''b=avg_a_8.reshape(r,)[0:int(math.sqrt(r))**2].reshape(int(math.sqrt(r)),int(math.sqrt(r)))
-data = Image.fromarray((b * 255).astype(np.uint8))
-data.save('random_avg8.png')'''
-
-
-avg_a_16=sliding_average_string(rand, 16)
-'''
-b=avg_a_16.reshape(r,)[0:int(math.sqrt(r))**2].reshape(int(math.sqrt(r)),int(math.sqrt(r)))
-data = Image.fromarray((b * 255).astype(np.uint8))
-data.save('random_avg16.png')'''
-
-
-avg_a_32=sliding_average_string(rand, 32)
-'''b=avg_a_32.reshape(r,)[0:int(math.sqrt(r))**2].reshape(int(math.sqrt(r)),int(math.sqrt(r)))
-data = Image.fromarray((b * 255).astype(np.uint8))
-data.save('random_avg32.png')'''
-
-
-avg_a_64=sliding_average_string(rand, 64)
-'''b=avg_a_64.reshape(r,)[0:int(math.sqrt(r))**2].reshape(int(math.sqrt(r)),int(math.sqrt(r)))
-data = Image.fromarray((b * 255).astype(np.uint8))
-data.save('random_avg64.png')'''
-
-
-avg_a_128=sliding_average_string(rand, 128)
-'''b=avg_a_128.reshape(r,)[0:int(math.sqrt(r))**2].reshape(int(math.sqrt(r)),int(math.sqrt(r)))
-data = Image.fromarray((b * 255).astype(np.uint8))
-data.save('random_avg128.png')'''
-
-
-avg_a_256=sliding_average_string(rand, 256)
-'''b=avg_a_256.reshape(r,)[0:int(math.sqrt(r))**2].reshape(int(math.sqrt(r)),int(math.sqrt(r)))
-data = Image.fromarray((b * 255).astype(np.uint8))
-data.save('random_avg256.png')'''
-
-
-print("test random matrix:")
-
-print("0-2: ", overlap(normalize(rand),normalize(avg_a_2)))
-print("2-4: ", overlap(normalize(avg_a_2),normalize(avg_a_4)))
-print("4-8: ", overlap(normalize(avg_a_4),normalize(avg_a_8)))
-print("8-16: ", overlap(normalize(avg_a_8),normalize(avg_a_16)))
-print("16-32: ", overlap(normalize(avg_a_16),normalize(avg_a_32)))
-print("32-64: ", overlap(normalize(avg_a_32),normalize(avg_a_64)))
-print("64-128: ", overlap(normalize(avg_a_64),normalize(avg_a_128)))
-print("128-256: ", overlap(normalize(avg_a_128),normalize(avg_a_256)))
-
-sizes=[avg_a_2, avg_a_4, avg_a_8, avg_a_16, avg_a_32, avg_a_64, avg_a_128]
-total_complexity=0
-for i in range(0, len(sizes)-1):
-	total_complexity=total_complexity+overlap(normalize(sizes[i]),normalize(sizes[i+1]))
-
-print(total_complexity)
