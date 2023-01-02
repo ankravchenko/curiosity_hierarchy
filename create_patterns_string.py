@@ -129,7 +129,7 @@ def generate_mirror_strings_array(length: int):
 def generate_random_string(length: int):
     s=[]	
     for i in range(0,length):
-        s.append(randint(0,3))
+        s.append(randint(0,4))
     return s
 
 
@@ -145,7 +145,7 @@ def calculate_total_complexity(cf_string):
     avg_a_128=sliding_average_string(cf_string, 128)
     avg_a_256=sliding_average_string(cf_string, 256)
 
-
+    '''
     print("0-2: ", overlap(normalize(cf_string),normalize(avg_a_2)))
     print("2-4: ", overlap(normalize(avg_a_2),normalize(avg_a_4)))
     print("4-8: ", overlap(normalize(avg_a_4),normalize(avg_a_8)))
@@ -154,97 +154,91 @@ def calculate_total_complexity(cf_string):
     print("32-64: ", overlap(normalize(avg_a_32),normalize(avg_a_64)))
     print("64-128: ", overlap(normalize(avg_a_64),normalize(avg_a_128)))
     print("128-256: ", overlap(normalize(avg_a_128),normalize(avg_a_256)))
-
+    '''
     sizes=[cf_string, avg_a_2, avg_a_4, avg_a_8, avg_a_16]#, avg_a_32, avg_a_64, avg_a_128]
     total_complexity=0
     for i in range(0, len(sizes)-1):
         total_complexity=total_complexity+overlap(normalize(sizes[i]),normalize(sizes[i+1]))
 
-    return total_complexity
+    return [overlap(normalize(sizes[1]),normalize(sizes[2])), overlap(normalize(sizes[2]),normalize(sizes[3])), overlap(normalize(sizes[3]),normalize(sizes[4])), total_complexity]
 
 
 ##########function end###############
 
 file1 = open('complexity_mirror_copy_4_100.txt', 'w')
-n=20
 
-print('n = ',n*2)
+for n in range(2,100):
 
-mirror_strings=[]
-copy_strings=[]
+	print('n = ',n*2)
 
-
-'''
-#generates full grammar
-for half_string in generate_strings_array(n):
-    copy_string=half_string+half_string
-    hs=half_string.copy()
-    hs.reverse()
-    mirror_string=half_string+hs
-    copy_strings.append(copy_string)
-    mirror_strings.append(mirror_string)
-'''
-
-#generates l sentences from a grammar
-l=100
-for i in range(1,l):
-    half_string = generate_random_string(n)
-    copy_string=half_string+half_string
-    hs=half_string.copy()
-    hs.reverse()
-    mirror_string=half_string+hs
-    copy_strings.extend(copy_string)
-    mirror_strings.extend(mirror_string)
-	
-print('grammars generated')
-
-cf=np.asarray(mirror_strings)
-
-cs=np.asarray(copy_strings)
+	mirror_strings=[]
+	copy_strings=[]
 
 
-#cf_normalized =cf / cf.sum(axis=0)
-#cs_normalized =cs / cs.sum(axis=0)
-#string
+	'''
+	#generates full grammar
+	for half_string in generate_strings_array(n):
+	    copy_string=half_string+half_string
+	    hs=half_string.copy()
+	    hs.reverse()
+	    mirror_string=half_string+hs
+	    copy_strings.append(copy_string)
+	    mirror_strings.append(mirror_string)
+	'''
 
-cf_string=cf
-cs_string=cs
+	#generates l sentences from a grammar
+	l=100
+	for i in range(1,l):
+	    half_string = generate_random_string(n)
+	    copy_string=half_string+half_string
+	    hs=half_string.copy()
+	    hs.reverse()
+	    mirror_string=half_string+hs
+	    copy_strings.extend(copy_string)
+	    mirror_strings.extend(mirror_string)
+		
+	print('grammars generated')
 
+	cf=np.asarray(mirror_strings)
 
-
-print("context-free grammar:")
-total_complexity = calculate_total_complexity(cf_string)
-print("total_complexity: ", total_complexity) 
-
-file1.write(total_complexity)
-file1.write('\t')
-  
-'''
-a_4=sliding_average_string(cf_string, 4)
-a_8=sliding_average_string(cf_string, 8)
-a_16=sliding_average_string(cf_string, 16)
-a_32=sliding_average_string(cf_string, 32)
-a_64=sliding_average_string(cf_string, 64)
-'''
-
-print("context-senstitive grammar:")
-total_complexity = calculate_total_complexity(cs_string)
-print("total_complexity: ", total_complexity) 
-
-file1.write(total_complexity)
-file1.write('\n')
-
-'''
-ca_4=sliding_average_string(cs_string, 4)
+	cs=np.asarray(copy_strings)
 
 
-ca_8=sliding_average_string(cs_string, 8)
+	#cf_normalized =cf / cf.sum(axis=0)
+	#cs_normalized =cs / cs.sum(axis=0)
+	#string
 
-ca_16=sliding_average_string(cs_string, 16)
+	cf_string=cf
+	cs_string=cs
 
-ca_32=sliding_average_string(cs_string, 32)
-ca_64=sliding_average_string(cs_string, 64)
-'''
+
+
+	print("context-free grammar:")
+	[o_2_4, o_4_8, o_8_16, total_complexity] = calculate_total_complexity(cf_string)
+	print("total_complexity: ", total_complexity) 
+
+	file1.write(str(o_4_8))
+	file1.write('\t')
+
+
+	print("context-senstitive grammar:")
+	[o_2_4, o_4_8, o_8_16, total_complexity] = calculate_total_complexity(cs_string)
+	print("total_complexity: ", total_complexity) 
+
+	file1.write(str(o_4_8))
+	file1.write('\n')
+
+	'''
+	ca_4=sliding_average_string(cs_string, 4)
+
+
+	ca_8=sliding_average_string(cs_string, 8)
+
+	ca_16=sliding_average_string(cs_string, 16)
+
+	ca_32=sliding_average_string(cs_string, 32)
+	ca_64=sliding_average_string(cs_string, 64)
+	'''
 
 ################DEBUG#########################
 '''
