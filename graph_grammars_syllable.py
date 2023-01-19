@@ -17,16 +17,18 @@ import scipy.stats as stats
 from numpy import linalg as LA
 
 
+ATTENTION_LIMIT=5
+
 SENTENCE_N = 100
 
 alphabet=['l','a','d','e']
-syllable_dict={ 0: 'lai',
-		1: 'del',
-		2: 'eai',
-		3: 'lad',
-		4: 'dei',
-		5: 'ali',
-		6: 'led'}
+syllable_dict={ 0: 'oni',
+		1: 'de',
+		2: 'kaf',
+		3: 'tb',
+		4: 'mai',
+		5: 'pc',
+		6: 'bqt'}
 
 #code sequences as lists of int: [1, 2 , 3, 4]
 
@@ -153,6 +155,8 @@ def generate_random_string(length: int):
         s.append(randint(0,5))
     return s
 
+
+
 def all_pair_correlations(sentence_length, all_sentences):
 	n=sentence_length*6#len(max(all_sentences)) 
 	#alph length is always 5 here
@@ -175,6 +179,8 @@ def all_pair_correlations(sentence_length, all_sentences):
 						cnt=cnt+1
 					elif (all_sentences[j][position_pair[1]],all_sentences[j][position_pair[0]]) == pair:
 						cnt=cnt+1
+				#add cutout here
+				
 				cor_matrix[position_pair[0]][position_pair[1]]=cnt/SENTENCE_N
 				cor_matrix[position_pair[1]][position_pair[0]]=cnt/SENTENCE_N	
 			letter_pair_positional_cors[pair]=cor_matrix

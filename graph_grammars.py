@@ -16,8 +16,9 @@ import scipy.stats as stats
 
 from numpy import linalg as LA
 
-
+ATTENTION_LIMIT=10
 SENTENCE_N = 100
+
 #code sequences as lists of int: [1, 2 , 3, 4]
 
 #creates a row of coloured squares from a sequence, returns image
@@ -161,8 +162,9 @@ def all_pair_correlations(sentence_length, all_sentences):
 						cnt=cnt+1
 					elif (all_sentences[j][position_pair[1]],all_sentences[j][position_pair[0]]) == pair:
 						cnt=cnt+1
-				cor_matrix[position_pair[0]][position_pair[1]]=cnt/SENTENCE_N
-				cor_matrix[position_pair[1]][position_pair[0]]=cnt/SENTENCE_N	
+				if (ATTENTION_LIMIT - abs(position_pair[0]-position_pair[1]))>= 0:
+					cor_matrix[position_pair[0]][position_pair[1]]=cnt/SENTENCE_N
+					cor_matrix[position_pair[1]][position_pair[0]]=cnt/SENTENCE_N	
 			letter_pair_positional_cors[pair]=cor_matrix
 	return letter_pair_positional_cors	
 
@@ -399,7 +401,7 @@ plt.clf()
 
 #all_letter_pairs=list(itertools.combinations(range(5), 2))
 
-
+'''
 all_pos_pairs = list(itertools.combinations_with_replacement(range(0,20), 2))
 ttt=len(all_pos_pairs)
 x=range(0,ttt)
@@ -462,10 +464,28 @@ plt.ylabel('l1')
 #    plt.hlines(y[i],0,x[i]) # Here you are drawing the horizontal lines
 plt.savefig('hist_type0.png')
 plt.clf()
+'''
 
+mirror_eig=LA.eig(mirror_total_cor)
+random_eig=LA.eig(random_total_cor)
+copy_eig=LA.eig(copy_total_cor)
+
+mirror_eig[0].sort()
+copy_eig[0].sort()
+random_eig[0].sort()
+
+lx=len(mirror_eig[0])
+x=range(0,lx)
+
+plt.clf()
+plt.plot(x, copy_eig[0], label='copy language')
+plt.plot(x, mirror_eig[0], label='mirror language')
+plt.legend(loc="upper left")
+plt.show()
 '''
 #Scipy's entropy function will calculate KL divergence if feed two vectors p and q, each representing a probability distribution. If the two vectors aren't pdfs, it will normalize then first.
 kl_copy=stats.entropy(random_total_cor, copy_total_cor, axis=(0,1))
 kl_mirror=stats.entropy(random_total_cor, mirror_total_cor, axis=(0,1))
 kl_random=stats.entropy(random_total_cor, random_total_cor, axis=(0,1))'''
+
 
